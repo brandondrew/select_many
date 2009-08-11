@@ -22,4 +22,61 @@ jQuery(function() {
     item.click();
     equals(item.attr('disabled'), true);
   });
+
+  test("clicking the select element does not add items to the selected list", function() {
+    equals(this.selectedList.find('li').size(), 0);
+    this.harleys.click();
+    equals(this.selectedList.find('li').size(), 0);
+  });
+
+  test("clicking a disabled option does nothing", function() {
+    var item = this.harleys.find('option[value=1]');
+    item.click();
+    equals(this.selectedList.find('li').size(), 1);
+    item.click();
+    equals(this.selectedList.find('li').size(), 1);
+  });
+
+  test("selecting an option creates a hidden input field inside its selected list item", function() {
+    this.harleys.find('option[value=3]').click();
+    var li = this.selectedList.find('li');
+    var input = li.find('input[type=hidden]');
+
+    ok(input.get(0));
+  });
+ 
+  test("a selected option's hidden input field should have its value set to the options value", function() {
+    this.harleys.find('option[value=4]').click();
+    var input = this.selectedList.find('li input[type=hidden]');
+
+    equals(input.attr('value'), '4');
+  });
+ 
+  test("a selected option's hidden input field should have its name set to the parent select's name", function() {
+    this.harleys.find('option[value=4]').click();
+    var input = this.selectedList.find('li input[type=hidden]');
+
+    equals(input.attr('name'), 'harleys[]');
+  });
+
+  test("the select element should have it's name attribute removed", function() {
+    equals(this.harleys.attr('name'), "");
+  });
+
+  test("clicking a selected list item removes it from the list", function() {
+    this.harleys.find('option[value=4]').click();
+    var li = this.selectedList.find('li');
+
+    equals(this.selectedList.find('li').size(), 1);
+    li.click();
+    equals(this.selectedList.find('li').size(), 0);
+  });
+
+  test("clicking a selected list item enables its option in the select", function() {
+    var option = this.harleys.find('option[value=4]');
+    option.click();
+    equals(option.attr('disabled'), true);
+    this.selectedList.find('li').click();
+    equals(option.attr('disabled'), false);
+  });
 });
