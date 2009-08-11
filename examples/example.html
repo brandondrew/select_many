@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns='http://www.w3.org/1999/xhtml'>
+  <head>
+    <script type='text/javascript' src="../test/jquery.js"></script>
+    <script type='text/javascript' src='../lib/jquery.select_many.js'></script>
+    <link rel="stylesheet" href="../css/jquery.select_many.css" type="text/css" media="screen" />
+    <title>selectMany Example</title>
+    <script type="text/javascript">
+      jQuery(function() { jQuery('select.select-many').selectMany(); });
+    </script>
+  </head>
+  <body>
+    <form id="motorcycles" action="/foo">
+      <select id="harleys" name="harleys[]" class="select-many">
+        <option value=""></option>
+        <option value="1">Sportster XR1200</option>
+        <option value="2">Dyna Fat Bob</option>
+        <option value="3">Softail Deluxe</option>
+        <option value="4">Night Rod Special</option>
+        <option value="5">Street Glide</option>
+      </select>
+    </form>
+  </body>
+</html>
