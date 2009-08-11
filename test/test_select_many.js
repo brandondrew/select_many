@@ -17,8 +17,10 @@ jQuery(function() {
       jQuery('select.select-many').selectMany();
       this.harleys = jQuery('#harleys');
       this.hondas = jQuery('#hondas');
+      this.triumphs = jQuery('#triumphs');
       this.harleysSelected = this.harleys.prev('ul.select-many-selected');
       this.hondasSelected = this.hondas.prev('ul.select-many-selected');
+      this.triumphsSelected = this.triumphs.prev('ul.select-many-selected');
     }
   });
 
@@ -99,4 +101,16 @@ jQuery(function() {
     equals(this.hondasSelected.find('li').size(), 1);
     equals(this.hondasSelected.find('li').text(), 'Hornet');
   });
+
+  test("multiple attribute is removed from select", function() {
+    equals(this.triumphs.attr('multiple'), false);
+  });
+
+  test("select with multiple attribute allows for multiple preselected values", function() {
+    equals(this.triumphsSelected.find('li').size(), 3);
+    equals(this.triumphsSelected.find('li').eq(0).text(), 'Street Triple');
+    equals(this.triumphsSelected.find('li').eq(1).text(), 'Scrambler');
+    equals(this.triumphsSelected.find('li').eq(2).text(), 'Tiger');
+  });
+
 });
