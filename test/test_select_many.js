@@ -1,4 +1,17 @@
 jQuery(function() {
+
+  function changeSelect(select, optionValue) {
+    var select = jQuery(select);
+
+    select.find('option').each(function(idx) {
+      if (this.value == optionValue) {
+        select.get(0).selectedIndex = idx;
+        select.trigger('change')
+        return false;
+      }
+    });
+  }
+
   module("selectMany", {
     setup: function() {
       jQuery('select.select-many').selectMany();
@@ -12,14 +25,14 @@ jQuery(function() {
   });
 
   test("selecting an option should create a corresponding list item", function() {
-    this.harleys.find('option[value=3]').click();
+    changeSelect(this.harleys, '3');
     equals(this.selectedList.find('li').size(), 1);
     equals(this.selectedList.find('li').text(), 'Softail Deluxe');
   });
 
   test("selecting an option should set it to disabled", function() {
     var item = this.harleys.find('option[value=1]');
-    item.click();
+    changeSelect(this.harleys, '1');
     equals(item.attr('disabled'), true);
   });
 
@@ -31,14 +44,14 @@ jQuery(function() {
 
   test("clicking a disabled option does nothing", function() {
     var item = this.harleys.find('option[value=1]');
-    item.click();
+    changeSelect(this.harleys, '1');
     equals(this.selectedList.find('li').size(), 1);
     item.click();
     equals(this.selectedList.find('li').size(), 1);
   });
 
   test("selecting an option creates a hidden input field inside its selected list item", function() {
-    this.harleys.find('option[value=3]').click();
+    changeSelect(this.harleys, '3');
     var li = this.selectedList.find('li');
     var input = li.find('input[type=hidden]');
 
@@ -46,14 +59,14 @@ jQuery(function() {
   });
  
   test("a selected option's hidden input field should have its value set to the options value", function() {
-    this.harleys.find('option[value=4]').click();
+    changeSelect(this.harleys, '4');
     var input = this.selectedList.find('li input[type=hidden]');
 
     equals(input.attr('value'), '4');
   });
  
   test("a selected option's hidden input field should have its name set to the parent select's name", function() {
-    this.harleys.find('option[value=4]').click();
+    changeSelect(this.harleys, '4');
     var input = this.selectedList.find('li input[type=hidden]');
 
     equals(input.attr('name'), 'harleys[]');
@@ -64,7 +77,7 @@ jQuery(function() {
   });
 
   test("clicking a selected list item removes it from the list", function() {
-    this.harleys.find('option[value=4]').click();
+    changeSelect(this.harleys, '4');
     var li = this.selectedList.find('li');
 
     equals(this.selectedList.find('li').size(), 1);
@@ -74,7 +87,7 @@ jQuery(function() {
 
   test("clicking a selected list item enables its option in the select", function() {
     var option = this.harleys.find('option[value=4]');
-    option.click();
+    changeSelect(this.harleys, '4');
     equals(option.attr('disabled'), true);
     this.selectedList.find('li').click();
     equals(option.attr('disabled'), false);
