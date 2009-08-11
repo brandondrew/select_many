@@ -3,6 +3,10 @@ select.select-many, .select-many-selected {
   width: 150px;
 }
 
+.select-many-selected {
+  margin: 0;
+}
+
 .select-many-selected, .select-many-selected li {
   list-style-type: none;
   padding: 0;
