@@ -20,5 +20,5 @@ select.select-many, .select-many-selected {
 }
 
 .select-many-selected li:hover {
-  background-color: gray;
+  background-color: #e7e7e7;
 }

@@ -2,11 +2,18 @@
 <html xmlns='http://www.w3.org/1999/xhtml'>
   <head>
     <script type='text/javascript' src="../test/jquery.js"></script>
-    <script type='text/javascript' src='../lib/jquery.select_many.js'></script>
-    <link rel="stylesheet" href="../css/jquery.select_many.css" type="text/css" media="screen" />
+    <script type='text/javascript' src='../src/lib/jquery.select_many.js'></script>
+    <link rel="stylesheet" href="../src/stylesheets/jquery.select_many.css" type="text/css" media="screen" />
     <title>selectMany Example</title>
     <script type="text/javascript">
-      jQuery(function() { jQuery('select.select-many').selectMany(); });
+      jQuery(function($) {
+        $('select.select-many').selectMany();
+
+        $('#motorcycles').submit(function(e) {
+          e.preventDefault();
+          $('#log').append($(e.target).serialize() + "\n");
+        });
+      });
     </script>
   </head>
   <body>
@@ -37,6 +44,9 @@
         <option value="4" selected="selected">Tiger</option>
         <option value="5">Thruxton</option>
       </select>
+      <br />
+      <input type="submit" />
     </form>
+    <pre id="log"></pre>
   </body>
 </html>
