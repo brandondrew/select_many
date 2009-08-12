@@ -13,7 +13,7 @@
         });
       }
       jQuery(function($) {
-        $('select.select-many').selectMany();
+        $('select').selectMany();
 
         $('#motorcycles').submit(function(e) {
           e.preventDefault();
@@ -25,7 +25,7 @@
   <body>
     <form id="motorcycles" action="/foo">
       <label for="harleys">Harleys</label>
-      <select id="harleys" name="harleys[]" class="select-many">
+      <select id="harleys" name="harleys[]">
         <option value=""></option>
         <option value="1">Sportster XR1200</option>
         <option value="2">Dyna Fat Bob</option>
@@ -35,7 +35,7 @@
       </select>
       <br />
       <label for="hondas">Hondas</label>
-      <select id="hondas" name="hondas[]" class="select-many">
+      <select id="hondas" name="hondas[]">
         <option value=""></option>
         <option value="1">Gold Wing</option>
         <option value="2">Shadow</option>
@@ -45,7 +45,7 @@
       </select>
       <br />
       <label for="triumphs">Triumphs</label>
-      <select id="triumphs" name="triumphs[]" multiple="multiple" class="select-many">
+      <select id="triumphs" name="triumphs[]" multiple="multiple">
         <option value=""></option>
         <option value="1" selected="selected">Street Triple</option>
         <option value="2">Rocket</option>

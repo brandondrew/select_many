@@ -14,7 +14,7 @@ jQuery(function() {
 
   module("selectMany", {
     setup: function() {
-      jQuery('select.select-many').selectMany();
+      jQuery('select').selectMany();
       this.harleys = jQuery('#harleys');
       this.hondas = jQuery('#hondas');
       this.triumphs = jQuery('#triumphs');
@@ -22,6 +22,10 @@ jQuery(function() {
       this.hondasSelected = this.hondas.prev('ul.select-many-selected');
       this.triumphsSelected = this.triumphs.prev('ul.select-many-selected');
     }
+  });
+
+  test("should add select-many class to select element", function() {
+    ok(this.harleys.hasClass('select-many'));
   });
 
   test("should create a ul before the select element with the class select-many-selected", function() {

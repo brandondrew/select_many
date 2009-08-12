@@ -3,6 +3,7 @@
     var $select = $(select);
     var $selectName = $select.attr('name');
 
+    $select.addClass('select-many');
     $select.attr('name', null);
     $select.before('<ul class="select-many-selected"></ul>');
 
