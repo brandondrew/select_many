@@ -6,18 +6,25 @@
     <link rel="stylesheet" href="../src/stylesheets/jquery.select_many.css" type="text/css" media="screen" />
     <title>selectMany Example</title>
     <script type="text/javascript">
+      function decodeParams(s) {
+        return s.replace(/%[0-9A-F]{2}/g, function(m) {
+          var hex = m.replace(/%/, '');
+          return String.fromCharCode(parseInt(hex, 16));
+        });
+      }
       jQuery(function($) {
         $('select.select-many').selectMany();
 
         $('#motorcycles').submit(function(e) {
           e.preventDefault();
-          $('#log').append($(e.target).serialize() + "\n");
+          $('#log').append(decodeParams($(e.target).serialize()) + "\n");
         });
       });
     </script>
   </head>
   <body>
     <form id="motorcycles" action="/foo">
+      <label for="harleys">Harleys</label>
       <select id="harleys" name="harleys[]" class="select-many">
         <option value=""></option>
         <option value="1">Sportster XR1200</option>
@@ -27,6 +34,7 @@
         <option value="5">Street Glide</option>
       </select>
       <br />
+      <label for="hondas">Hondas</label>
       <select id="hondas" name="hondas[]" class="select-many">
         <option value=""></option>
         <option value="1">Gold Wing</option>
@@ -36,6 +44,7 @@
         <option value="5">Inteceptor</option>
       </select>
       <br />
+      <label for="triumphs">Triumphs</label>
       <select id="triumphs" name="triumphs[]" multiple="multiple" class="select-many">
         <option value=""></option>
         <option value="1" selected="selected">Street Triple</option>
