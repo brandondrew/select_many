@@ -1,45 +1,54 @@
 (function($) {
   function _init(select) {
-    var $select = $(select);
-    var $selectName = $select.attr('name');
+    var multi  = $(select).hide();
+    var single = multi.clone().show().
+                               removeAttr('multiple').
+                               removeAttr('id').
+                               removeAttr('name').
+                               addClass('select-many');
+    var list   = $('<ul class="select-many-selected"></ul>');
 
-    $select.addClass('select-many');
-    $select.attr('name', null);
-    $select.before('<ul class="select-many-selected"></ul>');
+    // make sure that first first option in the single is blank
+    //if (single.find('options:first').val() != '') {
+    //  single.prepend('<option></option>').find('option:first').attr('selected', true);
+    //}
 
-    var $selectedItems = $select.prev();
+    multi.after(single);
+    multi.after(list);
 
-    $select.change(handleChange);
-    $selectedItems.click(handleItemClick);
+    single.change(handleSingleChange);
+    list.click(handleItemClick);
 
-    handleChange();
+    // handle pre-selected options
+    multi.find('option:selected').each(function() {
+      selectOption($(this));
+    });
 
-    $select.attr('multiple', null);
+    function selectOption(option) {
+      var item = $('<li></li>').text(option.text());
+      var val  = option.val();
 
-    function handleChange() {
-      $select.find('option:selected').each(function() {
-        var option = $(this);
-        if (option.val() != '') {
-          selectOption(option);
-        }
-      });
+      $.data(item[0], 'value', val);
+
+      list.append(item);
+
+      multi.find('option[value=' + val + ']').attr('selected', true);
+      single.find('option[value=' + val + ']').attr('disabled', true).attr('selected', false);
+    }
+
+    function handleSingleChange(e) {
+      var selectedOpt = single.find('option:selected');
+      selectOption(selectedOpt);
     }
 
     function handleItemClick(e) {
-      var element = $(e.target);
-      var val = element.find('input').val();
+      var item = e.target;
+      var val  = $.data(item, 'value');
 
-      element.remove();
+      $(item).remove();
 
-      $select.find('option[value=' + val + ']').attr('disabled', false);
-    }
-
-    function selectOption(option) {
-      var input = $('<input type="hidden" />').attr('name', $selectName).val(option.val());
-      var li = $('<li>' + option.text() + '</li>').append(input);
-      $selectedItems.append(li);
-      option.attr('disabled', true);
-      option.attr('selected', false);
+      multi.find('option[value=' + val + ']').attr('selected', false)
+      single.find('option[value=' + val + ']').attr('disabled', false)
     }
   }
 

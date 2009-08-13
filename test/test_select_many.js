@@ -12,109 +12,170 @@ jQuery(function() {
     });
   }
 
+  function _findParam(form, name, value) {
+    var data = form.serializeArray();
+    var foundParam = null;
+
+    jQuery.each(data, function() {
+      if (this.name == name && this.value == value) {
+        foundParam = this;
+      }
+    });
+
+    return foundParam;
+  }
+
+  function assertParamsContain(form, name, value) {
+    equals(_findParam(form, name, value), {name: name, value: value});
+  }
+
+  function denyParamsContain(form, name, value) {
+    equals(_findParam(form, name, value), null);
+  }
+
+
   module("selectMany", {
     setup: function() {
-      jQuery('select').selectMany();
-      this.harleys = jQuery('#harleys');
-      this.hondas = jQuery('#hondas');
-      this.triumphs = jQuery('#triumphs');
-      this.harleysSelected = this.harleys.prev('ul.select-many-selected');
-      this.hondasSelected = this.hondas.prev('ul.select-many-selected');
-      this.triumphsSelected = this.triumphs.prev('ul.select-many-selected');
+      jQuery('select[multiple]').selectMany();
+      this.form = jQuery('#motorcycles');
+      this.harleyMulti     = jQuery('#harleys')
+      this.harleySingle    = jQuery('#harleys').nextAll('select.select-many').eq(0);
+      this.harleySelected  = this.harleySingle.prev();
+      this.hondaMulti      = jQuery('#hondas')
+      this.hondaSingle     = jQuery('#hondas').nextAll('select.select-many').eq(0);
+      this.hondaSelected   = jQuery('#hondas').nextAll('ul').eq(0);
+      this.triumphMulti    = jQuery('#triumphs')
+      this.triumphSingle   = jQuery('#triumphs').nextAll('select.select-many').eq(0);
+      this.triumphSelected = jQuery('#triumphs').nextAll('ul').eq(0);
     }
   });
 
-  test("should add select-many class to select element", function() {
-    ok(this.harleys.hasClass('select-many'));
+  test("should add select-many class to single select element", function() {
+    ok(this.harleySingle.hasClass('select-many'));
   });
 
-  test("should create a ul before the select element with the class select-many-selected", function() {
-    ok(this.harleysSelected.get(0));
+  test("should create a ul before the single select element with the class select-many-selected", function() {
+    ok(this.harleySelected.get(0));
   });
+
+  test("should create a single select with the same options as the given select", function() {
+    var expOpts = this.triumphMulti.find('option');
+
+    ok(this.triumphSingle.get(0));
+
+    this.triumphSingle.find('option').each(function(idx) {
+      equals(jQuery(this).val(),        expOpts.eq(idx).val(), 'value');
+      equals(jQuery(this).attr('name'), expOpts.eq(idx).attr('name'), 'name');
+    });
+  });
+
+  test("single select should not have a name or id attributes", function() {
+    equals(this.harleySingle.attr('id'), '');
+    equals(this.harleySingle.attr('name'), '');
+  });
+
+  /*
+  test("the hidden multi select should default to having its first option selected if no other options are", function() {
+    var hiddenSelect = this.triumphSingle.next('select[multiple]:hidden');
+
+    this.triumphSelected.find('li').click();
+
+    equals(hiddenSelect.find('options:first').attr('selected'), true);
+  });
+  */
 
   test("selecting an option should create a corresponding list item", function() {
-    changeSelect(this.harleys, '3');
-    equals(this.harleysSelected.find('li').size(), 1);
-    equals(this.harleysSelected.find('li').text(), 'Softail Deluxe');
+    changeSelect(this.harleySingle, '3');
+    equals(this.harleySelected.find('li').size(), 1);
+    equals(this.harleySelected.find('li').text(), 'Softail Deluxe');
   });
 
   test("selecting an option should set it to disabled", function() {
-    var item = this.harleys.find('option[value=1]');
-    changeSelect(this.harleys, '1');
+    var item = this.harleySingle.find('option[value=1]');
+    changeSelect(this.harleySingle, '1');
     equals(item.attr('disabled'), true);
   });
 
-  test("clicking the select element does not add items to the selected list", function() {
-    equals(this.harleysSelected.find('li').size(), 0);
-    this.harleys.click();
-    equals(this.harleysSelected.find('li').size(), 0);
+  test("clicking the single select element does not add items to the selected list", function() {
+    equals(this.harleySelected.find('li').size(), 0);
+    this.harleySingle.click();
+    equals(this.harleySelected.find('li').size(), 0);
   });
 
   test("clicking a disabled option does nothing", function() {
-    var item = this.harleys.find('option[value=1]');
-    changeSelect(this.harleys, '1');
-    equals(this.harleysSelected.find('li').size(), 1);
+    var item = this.harleySingle.find('option[value=1]');
+    changeSelect(this.harleySingle, '1');
+    equals(this.harleySelected.find('li').size(), 1);
     item.click();
-    equals(this.harleysSelected.find('li').size(), 1);
+    equals(this.harleySelected.find('li').size(), 1);
   });
 
-  test("selecting an option creates a hidden input field inside its selected list item", function() {
-    changeSelect(this.harleys, '3');
-    var li = this.harleysSelected.find('li');
-    var input = li.find('input[type=hidden]');
+  test("selecting an option selects its value in the hidden multi select", function() {
+    var multiOption = this.harleyMulti.find('option[value=3]');
 
-    ok(input.get(0));
-  });
- 
-  test("a selected option's hidden input field should have its value set to the options value", function() {
-    changeSelect(this.harleys, '4');
-    var input = this.harleysSelected.find('li input[type=hidden]');
-
-    equals(input.attr('value'), '4');
+    equals(multiOption.attr('selected'), false);
+    changeSelect(this.harleySingle, '3');
+    equals(multiOption.attr('selected'), true);
   });
  
-  test("a selected option's hidden input field should have its name set to the parent select's name", function() {
-    changeSelect(this.harleys, '4');
-    var input = this.harleysSelected.find('li input[type=hidden]');
-
-    equals(input.attr('name'), 'harleys[]');
-  });
-
-  test("the select element should have it's name attribute removed", function() {
-    equals(this.harleys.attr('name'), "");
-  });
-
   test("clicking a selected list item removes it from the list", function() {
-    changeSelect(this.harleys, '4');
-    var li = this.harleysSelected.find('li');
+    changeSelect(this.harleySingle, '4');
+    var li = this.harleySelected.find('li');
 
-    equals(this.harleysSelected.find('li').size(), 1);
+    equals(this.harleySelected.find('li').size(), 1);
     li.click();
-    equals(this.harleysSelected.find('li').size(), 0);
+    equals(this.harleySelected.find('li').size(), 0);
   });
 
   test("clicking a selected list item enables its option in the select", function() {
-    var option = this.harleys.find('option[value=4]');
-    changeSelect(this.harleys, '4');
+    var option = this.harleySingle.find('option[value=4]');
+    changeSelect(this.harleySingle, '4');
     equals(option.attr('disabled'), true);
-    this.harleysSelected.find('li').click();
+    this.harleySelected.find('li').click();
     equals(option.attr('disabled'), false);
   });
 
+  test("clicking a selected list item deselects its option in the multi select", function() {
+    var multiOption = this.harleyMulti.find('option[value=4]');
+
+    changeSelect(this.harleySingle, '4');
+
+    equals(multiOption.attr('selected'), true);
+    this.harleySelected.find('li').click();
+    equals(multiOption.attr('selected'), false);
+  });
+
   test("preselected options should be automatically added to selected list", function() {
-    equals(this.hondasSelected.find('li').size(), 1);
-    equals(this.hondasSelected.find('li').text(), 'Hornet');
+    equals(this.hondaSelected.find('li').size(), 1);
+    equals(this.hondaSelected.find('li').text(), 'Hornet');
   });
 
   test("multiple attribute is removed from select", function() {
-    equals(this.triumphs.attr('multiple'), false);
+    equals(this.triumphSingle.attr('multiple'), false);
   });
 
   test("select with multiple attribute allows for multiple preselected values", function() {
-    equals(this.triumphsSelected.find('li').size(), 3);
-    equals(this.triumphsSelected.find('li').eq(0).text(), 'Street Triple');
-    equals(this.triumphsSelected.find('li').eq(1).text(), 'Scrambler');
-    equals(this.triumphsSelected.find('li').eq(2).text(), 'Tiger');
+    equals(this.triumphSelected.find('li').size(), 3);
+    equals(this.triumphSelected.find('li').eq(0).text(), 'Street Triple');
+    equals(this.triumphSelected.find('li').eq(1).text(), 'Scrambler');
+    equals(this.triumphSelected.find('li').eq(2).text(), 'Tiger');
   });
 
+  test("serializing a select with no pre-selected values should yield a blank value", function() {
+    assertParamsContain(this.form, 'harleys[]', '');
+  });
+
+  test("serializing a select with 1 or more pre-selected values should not yield a blank value", function() {
+    denyParamsContain(this.form, 'hondas[]', '');
+  });
+
+  test("serializing a select that has had all of its options deselected should yield a blank value", function() {
+    denyParamsContain(this.form, 'triumphs[]', '');
+
+    this.triumphSelected.find('li').each(function() {
+      jQuery(this).click();
+    });
+
+    assertParamsContain(this.form, 'triumphs[]', '');
+  });
 });
