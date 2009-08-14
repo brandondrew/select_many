@@ -7,7 +7,7 @@
     <title>selectMany Example</title>
     <script type="text/javascript">
       jQuery(function($) {
-        $('select[multiple]').selectMany();
+        $('select[multiple]').selectMany({ defaultValue: 'baz' });
 
         $('#motorcycles').submit(function(e) {
           e.preventDefault();
@@ -20,7 +20,6 @@
     <form id="motorcycles" action="/foo" multiple="multiple">
       <label for="harleys">Harleys</label>
       <select id="harleys" multiple="multiple" name="harleys[]">
-        <option></option>
         <option value="1">Sportster XR1200</option>
         <option value="2">Dyna Fat Bob</option>
         <option value="3">Softail Deluxe</option>

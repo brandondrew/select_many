@@ -26,13 +26,12 @@ jQuery(function() {
   }
 
   function assertParamsContain(form, name, value) {
-    equals(_findParam(form, name, value), {name: name, value: value});
+    same(_findParam(form, name, value), {name: name, value: value});
   }
 
   function denyParamsContain(form, name, value) {
     equals(_findParam(form, name, value), null);
   }
-
 
   module("selectMany", {
     setup: function() {
@@ -73,16 +72,6 @@ jQuery(function() {
     equals(this.harleySingle.attr('id'), '');
     equals(this.harleySingle.attr('name'), '');
   });
-
-  /*
-  test("the hidden multi select should default to having its first option selected if no other options are", function() {
-    var hiddenSelect = this.triumphSingle.next('select[multiple]:hidden');
-
-    this.triumphSelected.find('li').click();
-
-    equals(hiddenSelect.find('options:first').attr('selected'), true);
-  });
-  */
 
   test("selecting an option should create a corresponding list item", function() {
     changeSelect(this.harleySingle, '3');
@@ -159,6 +148,37 @@ jQuery(function() {
     equals(this.triumphSelected.find('li').eq(0).text(), 'Street Triple');
     equals(this.triumphSelected.find('li').eq(1).text(), 'Scrambler');
     equals(this.triumphSelected.find('li').eq(2).text(), 'Tiger');
+  });
+
+  test("should create an option for a blank value in the multi select if it doesn't already exist", function() {
+    equals(this.harleyMulti.find('option:first').val(), '');
+  });
+
+  test("should not create an option for a blank value in the multi select if one already exists", function() {
+    equals(this.hondaMulti.find('option').eq(0).val(), '');
+    ok(this.hondaMulti.find('option').eq(1).val() != '');
+  });
+
+  test("blank option should automatically be selected on initialization if no other options are", function() {
+    equals(this.harleyMulti.find('option:first').attr('selected'), true);
+  });
+
+  test("blank option should not be set on initialization if any other options are", function() {
+    equals(this.hondaMulti.find('option:first').attr('selected'), false);
+  });
+
+  test("selecting an option should unselect the blank option", function() {
+    equals(this.harleyMulti.find('option:first').attr('selected'), true);
+    changeSelect(this.harleySingle, '4');
+    equals(this.harleyMulti.find('option:first').attr('selected'), false);
+  });
+
+  test("deselcting all options should set the blank option to selected", function() {
+    equals(this.harleyMulti.find('option:first').attr('selected'), true);
+    changeSelect(this.harleySingle, '4');
+    equals(this.harleyMulti.find('option:first').attr('selected'), false);
+    this.harleySelected.find('li').click();
+    equals(this.harleyMulti.find('option:first').attr('selected'), true);
   });
 
   test("serializing a select with no pre-selected values should yield a blank value", function() {
